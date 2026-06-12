@@ -2,48 +2,83 @@
 
 ## Project overview
 
-Two standalone music genre classification scripts. Each script is self-contained — no shared state beyond `tags.py`.
+Music folder analyzer with two entry points:
+- `app.py` — PyQt6 GUI (browse input/output folders, scan, analyze, move)
+- `analyze_folder.py` — CLI equivalent
+
+Both use functions imported from `analyzers/` — no subprocess calls.
 
 ## Environment
 
 - Python 3.13, Windows 11
-- Venv at `venv/` — always run scripts through `venv/Scripts/python.exe` or activate first
-- `essentia` and `essentia-tensorflow` do **not** install on Python 3.13 / Windows; the project intentionally avoids them
+- Venv at `venv/` — always run through `venv/Scripts/python.exe` or activate first
+- `essentia` and `essentia-tensorflow` do **not** install on Python 3.13 / Windows; intentionally avoided
 
-## Running scripts
+## Running
 
 ```powershell
 .\venv\Scripts\Activate.ps1
-python ast_analyze.py test/a_breath_of_air_2876.mp3
-python muq_analyze.py test/a_breath_of_air_2876.mp3
+python app.py                                              # GUI
+python analyze_folder.py                                   # CLI
+
+# Individual analyzers (still runnable directly):
+python analyzers/ast_analyze.py test/a_breath_of_air_2876.mp3
+python analyzers/muq_analyze.py test/a_breath_of_air_2876.mp3
+python analyzers/bpm_analyze.py test/a_breath_of_air_2876.mp3
 ```
+
+## Package layout
+
+```
+analyzers/
+├── __init__.py          # empty — marks it as a package
+├── tags.py              # write_tags(path, dict) and update_tags(path, genres)
+├── bpm_analyze.py       # detect_bpm(path) → (bpm, duration)
+├── muq_analyze.py       # load_segments(), classify_genre() — MuQ-MuLan only
+└── ast_analyze.py       # classify() — MIT AST, 527 AudioSet labels
+```
+
+Each analyzer script adds `sys.path.insert(0, str(Path(__file__).parent.resolve()))` so
+`from tags import ...` resolves to `analyzers/tags.py` whether run directly or imported
+as `analyzers.<module>`.
 
 ## Key design decisions
 
-**AST (`ast_analyze.py`)**
+**AST (`analyzers/ast_analyze.py`)**
 - Model: `MIT/ast-finetuned-audioset-10-10-0.4593` via `transformers`
-- Audio: 16 kHz, split into 10-second segments (up to 6), logits averaged
-- Genre selection: searches all 527 AudioSet labels ranked by confidence; prefers genre-keyword matches, then any label containing "music", then top-1 overall
+- Audio: 16 kHz, up to 6 × 10-second segments, logits averaged across segments
+- Genre selection: three-pass fallback — genre keyword match → label contains "music" → overall top-1
 
-**MuQ (`muq_analyze.py`)**
-- Models: `OpenMuQ/MuQ-large-msd-iter` (audio features) + `OpenMuQ/MuQ-MuLan-large` (text-audio similarity)
-- Audio: 24 kHz (MuQ native), split into 30-second segments (up to 3)
-- Genre selection: cosine similarity between mean-pooled audio embedding and 24 descriptive genre text prompts
-- MuQ alone cannot produce genre labels — MuQ-MuLan is required for the joint embedding space
+**MuQ (`analyzers/muq_analyze.py`)**
+- Models: `OpenMuQ/MuQ-large-msd-iter` + `OpenMuQ/MuQ-MuLan-large`
+- Audio: 24 kHz (MuQ native), up to 3 × 30-second segments
+- `classify_genre()` only needs MuLan — `app.py` and `analyze_folder.py` skip loading MuQ to save ~300 MB RAM
+- Genre selection: cosine similarity against 24 descriptive text prompts
 
-**Tagging (`tags.py`)**
-- Uses `TXXX` ID3 frames with `desc="genre1"`, `"genre2"`, `"genre3"` instead of a single `TCON` list
-- Supports `.mp3` (via `mutagen.mp3.MP3`) and `.wav` (via `mutagen.wave.WAVE`)
+**BPM (`analyzers/bpm_analyze.py`)**
+- Uses `librosa.beat.beat_track()` at 22050 Hz
+- Returns a scalar via `np.atleast_1d(tempo)[0]` (handles both librosa <0.10 scalar and ≥0.10 array)
+
+**Tagging (`analyzers/tags.py`)**
+- `write_tags(path, dict[str, str])` — generic TXXX writer for any key/value pair
+- `update_tags(path, genres)` — convenience wrapper that calls `write_tags` with `genre1/2/3`
+- Supports `.mp3` (mutagen.mp3.MP3) and `.wav` (mutagen.wave.WAVE)
+
+**File moving (`app.py`, `analyze_folder.py`)**
+- `move_to_output(src, output_dir)` — creates output dir if needed, appends `(n)` counter on name conflict
+- Files are moved **after** tagging, so a crash mid-move leaves the tagged original in the input folder
 
 ## Adding a new analyzer
 
-1. Create `<model_name>_analyze.py`
-2. Import `update_tags` from `tags.py`
-3. Call `update_tags(path, [genre1, genre2, genre3])`
+1. Create `analyzers/<model>_analyze.py`
+2. Add `sys.path.insert(0, str(Path(__file__).parent.resolve()))` after stdlib imports
+3. Import `write_tags` or `update_tags` from `tags`
+4. Export the detection/classification function so `app.py` / `analyze_folder.py` can import it
 
-## Models download location
+## Model sizes (HuggingFace cache: `~/.cache/huggingface/hub/`)
 
-HuggingFace cache: `~/.cache/huggingface/hub/`
-- AST model: ~90 MB
-- MuQ: ~300 MB
-- MuQ-MuLan: ~700 MB
+| Model | Size |
+|---|---|
+| MIT AST | ~90 MB |
+| OpenMuQ/MuQ-large-msd-iter | ~300 MB |
+| OpenMuQ/MuQ-MuLan-large | ~700 MB |

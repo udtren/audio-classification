@@ -13,6 +13,8 @@ import sys
 import warnings
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent.resolve()))
+
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
 os.environ.setdefault("HF_HUB_VERBOSITY", "error")

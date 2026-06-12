@@ -1,10 +1,10 @@
-"""Shared tag-writing utilities for audio genre analyzers."""
+"""Shared tag-writing utilities for audio analyzers."""
 
 from pathlib import Path
 
 
-def update_tags(audio_path: str, genres: list[str]) -> None:
-    """Write genres into individual TXXX frames: genre1, genre2, genre3."""
+def write_tags(audio_path: str, tags: dict[str, str]) -> None:
+    """Write arbitrary key/value pairs as TXXX ID3 frames to an MP3 or WAV file."""
     ext = Path(audio_path).suffix.lower()
     try:
         if ext == ".mp3":
@@ -13,8 +13,8 @@ def update_tags(audio_path: str, genres: list[str]) -> None:
             audio = MP3(audio_path)
             if audio.tags is None:
                 audio.add_tags()
-            for i, genre in enumerate(genres, 1):
-                audio.tags.add(TXXX(encoding=3, desc=f"genre{i}", text=[genre]))
+            for key, value in tags.items():
+                audio.tags.add(TXXX(encoding=3, desc=key, text=[value]))
             audio.save()
 
         elif ext == ".wav":
@@ -23,16 +23,21 @@ def update_tags(audio_path: str, genres: list[str]) -> None:
             audio = WAVE(audio_path)
             if audio.tags is None:
                 audio.add_tags()
-            for i, genre in enumerate(genres, 1):
-                audio.tags.add(TXXX(encoding=3, desc=f"genre{i}", text=[genre]))
+            for key, value in tags.items():
+                audio.tags.add(TXXX(encoding=3, desc=key, text=[value]))
             audio.save()
 
         else:
             print(f"  Skipping tag — unsupported format: {ext}")
             return
 
-        for i, genre in enumerate(genres, 1):
-            print(f"  Tag written : genre{i} = {genre!r}")
+        for key, value in tags.items():
+            print(f"  Tag written : {key} = {value!r}")
 
     except Exception as exc:
         print(f"  Warning: could not write tag — {exc}")
+
+
+def update_tags(audio_path: str, genres: list[str]) -> None:
+    """Write top genres as TXXX frames genre1, genre2, genre3."""
+    write_tags(audio_path, {f"genre{i}": g for i, g in enumerate(genres, 1)})

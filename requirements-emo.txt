@@ -1,0 +1,16 @@
+# Extra requirements for analyzers/emo_analyze.py (amaai-lab/music2emo)
+# Install after main requirements:
+#   pip install -r requirements-emo.txt
+#   pip install torchaudio --index-url https://download.pytorch.org/whl/cpu
+#
+# Note: gradio is NOT required — emo_analyze.py stubs it out at import time.
+mir_eval
+pretty_midi
+music21>=9.0.0
+omegaconf>=2.3.0
+hydra-core>=1.3.0
+nnAudio>=0.3.0
+chordparser>=0.4.0
+pytorch-lightning>=2.0.0
+torchmetrics>=1.0.0
+torch-optimizer>=0.3.0
