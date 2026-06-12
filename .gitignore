@@ -1,0 +1,20 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+
+# Models (large binary files, downloaded on demand)
+models/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test audio (optional — remove if you want to commit samples)
+test/
