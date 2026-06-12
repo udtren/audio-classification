@@ -1,4 +1,4 @@
-# Audio Classification
+# Audio Tagger
 
 Music analyzer that tags MP3/WAV files with BPM, top-5 genres, and emotion (valence + arousal), then moves the tagged files to an output folder.
 
