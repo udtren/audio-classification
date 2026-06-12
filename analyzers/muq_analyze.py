@@ -44,30 +44,38 @@ MAX_SEGMENTS   = 3
 # MuQ-MuLan was trained on descriptive music-text pairs, so natural-language
 # descriptions outperform bare label names.
 GENRES: dict[str, str] = {
-    "Rock":          "rock music with electric guitars and a strong drum beat",
-    "Pop":           "upbeat pop music with catchy melody and production",
-    "Jazz":          "jazz with improvisation, swing rhythm and brass instruments",
-    "Classical":     "classical orchestral music, symphonic and composed",
-    "Hip Hop":       "hip hop and rap music with beats and rhyming lyrics",
-    "Electronic":    "electronic music with synthesizers and programmed beats",
-    "Country":       "country music with acoustic guitar and heartfelt storytelling",
-    "Blues":         "blues with soulful vocals, guitar bends and twelve-bar structure",
-    "Reggae":        "reggae with offbeat guitar chops and deep bass",
-    "Soul / R&B":    "soul and rhythm and blues with emotional vocals and groove",
-    "Folk":          "folk music, acoustic, traditional and storytelling",
-    "Heavy Metal":   "heavy metal with distorted guitars and aggressive energy",
-    "Punk":          "punk rock, fast tempo, raw DIY energy",
-    "Ambient":       "ambient music, atmospheric pads and slow textural development",
-    "New Age":       "new age meditative and peaceful music for relaxation",
-    "Disco":         "disco with funky bass, strings and four-on-the-floor beat",
-    "Funk":          "funk with syncopated bass, tight groove and brass stabs",
-    "Gospel":        "gospel with spiritual lyrics, choir vocals and organ",
-    "Latin":         "latin music with rhythmic percussion and Latin rhythms",
-    "House":         "house dance music with four-on-the-floor kick and synths",
-    "Acoustic":      "acoustic unplugged music, intimate and natural sounding",
-    "Instrumental":  "instrumental music without any vocals",
-    "Cinematic":     "cinematic orchestral film score, dramatic and epic",
-    "Lo-Fi":         "lo-fi hip hop, relaxed warm beats for studying",
+    # ── Retro / chiptune ─────────────────────────────────────────────────────
+    "Chiptune":          "8-bit chiptune video game music with square waves, triangle bass and noise percussion",
+    "16-bit":            "16-bit SNES-era game music with FM synthesis, sampled instruments and melodic loops",
+    "Synthwave":         "retro synthwave with 80s analogue synthesizers, arpeggios and nostalgic game feel",
+
+    # ── Game function / mood ─────────────────────────────────────────────────
+    "Boss Battle":       "intense dramatic boss battle music with heavy percussion, dissonance and building tension",
+    "Dungeon":           "dark atmospheric dungeon or cave music, eerie pads and minor key melodies",
+    "Exploration":       "adventurous open-world exploration music, sweeping and hopeful",
+    "Platformer":        "bouncy energetic platformer game music, upbeat and rhythmically driven",
+    "Puzzle":            "light playful puzzle game music, repetitive and calm with simple motifs",
+    "Horror":            "horror game music, unsettling dissonance, silence and sudden stingers",
+    "Victory / Fanfare": "short triumphant victory fanfare or jingle typical of game completion",
+    "Title Screen":      "atmospheric game title or menu screen music, memorable and introductory",
+
+    # ── Setting / aesthetic ──────────────────────────────────────────────────
+    "Fantasy RPG":       "epic fantasy role-playing game orchestral score with strings, choir and brass",
+    "Sci-Fi / Space":    "futuristic science fiction or space game music with electronic pads and cosmic atmosphere",
+    "Cyberpunk":         "cyberpunk urban game music with industrial beats, distorted bass and glitchy electronics",
+    "Tropical / Kawaii": "bright cheerful tropical or cute Japanese-style game music with steel drums or bells",
+    "Fighting Game":     "aggressive fast-paced fighting game music with heavy guitar riffs and driving rhythm",
+    "Street / Urban":    "urban street game music with hip hop beats, scratching and city atmosphere",
+
+    # ── Universal genres heavily used in game soundtracks ───────────────────
+    "Orchestral":        "cinematic orchestral game score, dynamic and emotionally expressive",
+    "Electronic":        "electronic game music with synthesizers, arpeggios and programmed beats",
+    "Rock":              "rock music in a game soundtrack with electric guitars and a strong drum beat",
+    "Heavy Metal":       "heavy metal game music with distorted guitars, double-kick drums and aggressive energy",
+    "Jazz":              "jazz-influenced game music with improvisation, swing and acoustic instruments",
+    "Ambient":           "ambient atmospheric game music with slow evolving pads and minimal melody",
+    "Lo-Fi":             "lo-fi relaxed warm beats, mellow and calm like background study music",
+    "Acoustic":          "acoustic guitar-driven game music, intimate and natural sounding",
 }
 
 

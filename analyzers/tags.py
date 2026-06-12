@@ -39,5 +39,5 @@ def write_tags(audio_path: str, tags: dict[str, str]) -> None:
 
 
 def update_tags(audio_path: str, genres: list[str]) -> None:
-    """Write top genres as TXXX frames genre1, genre2, genre3."""
+    """Write top genres as TXXX frames genre1 … genre5."""
     write_tags(audio_path, {f"genre{i}": g for i, g in enumerate(genres, 1)})

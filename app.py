@@ -120,7 +120,7 @@ class AnalysisWorker(QThread):
                 # Genre
                 segments, _ = load_segments(str(path))
                 genre_results = classify_genre(segments, mulan, device)
-                genres = [g for g, _ in genre_results[:3]]
+                genres = [g for g, _ in genre_results[:5]]
                 self.log.emit(f"  Genres   : {', '.join(genres)}")
                 update_tags(str(path), genres)
 
